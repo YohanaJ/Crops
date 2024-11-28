@@ -16,8 +16,7 @@ Libraries: pandas, numpy, scipy, statsmodels, sklearn
 #### R
 R version 4.x or higher
 Libraries: dplyr, ggplot2, readr, tidyr
-Data Preprocessing in Google Colab
-The preprocessing section is implemented in Python using Google Colab. The scripts include:
+
 
 ### Loading and Cleaning Data:
 Handling missing values.
