@@ -101,6 +101,7 @@ flags_proportion_avg = non_ax_proportions_avg.to_frame(name='yield_flags_proport
 
 final_df = final_df.merge(flags_proportion_avg, left_on='Area Code (M49)', right_index=True, how='left')
 
+####################### YIELD GAP TREND AND AVERAGE
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 import numpy as np
