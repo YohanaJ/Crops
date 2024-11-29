@@ -1,0 +1,6 @@
+This repository contains scripts and data used to preprocess predictors and calculate the response variable, "Yield Gap Trend." 
+The work focuses on estimating various forms of capital and diversity indices to support the analysis.
+### Scripts
+script_response_and_predictors.py:
+Focuses on natural capital based on major crops. Includes estimations for human, physical, financial, and socio-political capitals.
+script_predictors2.py:Expand s on natural capital estimations by considering all crops.
