@@ -480,7 +480,7 @@ final_df1 = final_df1.merge(fert_avg, left_on='Area Code (M49)', right_on='Area 
 # Display the first rows of the resulting DataFrame
 final_df1.head()
 
-# Load the roads dataset
+##################### Roads dataset
 roads = pd.read_csv("/content/drive/MyDrive/ColabNotebooks/input/roads_GRIP.csv")
 
 # Select only the relevant columns: country ISO code, mean road density, and area in square kilometers
@@ -501,7 +501,8 @@ final_df1 = final_df1.drop(columns=['isocode'])
 # Display the first rows of the resulting DataFrame
 final_df1.head()
 
-# Load the temperature dataset
+
+############################### Temperature dataset
 temp = pd.read_csv("/content/drive/MyDrive/ColabNotebooks/input/Environment_Temperature_change_E_All_Data_NOFLAG.csv")
 
 # Filter the dataset to include only rows where 'Element' is "Temperature change"
@@ -529,36 +530,36 @@ final_df1 = final_df1.merge(cv_temp, left_on='Area Code (M49)', right_on='Area C
 # Display the resulting DataFrame
 final_df1
 
-# Load the land cover dataset
-modis = pd.read_csv("/content/drive/MyDrive/ColabNotebooks/input/Environment_LandCover_E_All_Data.csv")
+############################ Land cover dataset
+landcover = pd.read_csv("/content/drive/MyDrive/ColabNotebooks/input/Environment_LandCover_E_All_Data.csv")
 
 # Convert the 'Area Code (M49)' column to integer after removing any quotation marks
-modis['Area Code (M49)'] = modis['Area Code (M49)'].str.replace("'", '').astype(int)
+landcover['Area Code (M49)'] = landcover['Area Code (M49)'].str.replace("'", '').astype(int)
 
 # Melt the dataset to transform the year columns into rows
-modis_melted = pd.melt(
-    modis,
+landcover_melted = pd.melt(
+   landcover,
     id_vars=['Area Code', 'Area Code (M49)', 'Area', 'Item Code', 'Item', 'Element Code', 'Element', 'Unit'],
     var_name='Year',
     value_name='Value'
 )
 
 # Extract the year from the 'Year' column and convert it to an integer
-modis_melted['Year'] = modis_melted['Year'].str.extract('(\d+)', expand=False).astype(int)
+landcover_melted['Year'] = landcover_melted['Year'].str.extract('(\d+)', expand=False).astype(int)
 
 # Pivot the dataset to have land cover classes as columns
-modis_pivoted = modis_melted.pivot_table(
+landcover_pivoted = landcover_melted.pivot_table(
     index=['Area Code', 'Area Code (M49)', 'Area', 'Year'],
     columns='Item',
     values='Value'
 ).reset_index()
 
 # Calculate the total land cover for each record by summing across all land cover classes
-modis_pivoted['Total_Land_Cover'] = modis_pivoted.iloc[:, 4:].sum(axis=1)
+landcover_pivoted['Total_Land_Cover'] = landcover_pivoted.iloc[:, 4:].sum(axis=1)
 
 # Extract 'Area Code (M49)' and 'Area(km2)' from final_df1 for merging
 keep = final_df1[['Area Code (M49)', 'Area(km2)']]
-merged_df = pd.merge(keep, modis_pivoted, on='Area Code (M49)', how='inner')
+merged_df = pd.merge(keep, landcover_pivoted, on='Area Code (M49)', how='inner')
 
 # Manually set 'Area(km2)' for specific country codes if missing
 area_values = {
