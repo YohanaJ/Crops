@@ -1,0 +1,4 @@
+This script processes and analyzes agricultural yield data to compute a weighted yield gap index, integrating information on crops, harvested areas, and yield gaps by country and year. 
+The calculations account for the proportion of each crop's harvested area within the total area, enabling the generation of national and temporal statistics.
+Not all crops contribute equally to a country's agricultural output. Using harvested area as a weight emphasizes the crops that dominate the landscape.
+The weighted yield gap provides a single value per country and year, summarizing the combined impact of yield gaps across all crops.
