@@ -108,7 +108,7 @@ import numpy as np
 from scipy import stats
 
 # Load the dataset containing yield gap data
-yield_gap = pd.read_csv('/content/drive/MyDrive/ColabNotebooks/input/ponderated_gap.csv')
+yield_gap = pd.read_csv('/content/drive/MyDrive/ColabNotebooks/input/Weighted_gap.csv')
 yield_data = filtered_data[filtered_data['Element'] == 'Area harvested']
 # Initialize a linear regression model
 model = LinearRegression()
