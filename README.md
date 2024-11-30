@@ -42,8 +42,12 @@ Explore the outputs and visualizations.
 
 
 ## The files include:
-Original datasets used
+Original datasets used.
+
 Cleaned datasets ready for analysis.
+
 Statistical models and insights.
+
 Visualizations of key findings.
+
 These results are discussed in detail in the paper, supported by code provided in this repository.
