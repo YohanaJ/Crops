@@ -252,5 +252,5 @@ final_merged_data_clean
 # Display the results
 #average_weighted_yield_gap
 from google.colab import files
-average_weighted_yield_gap.to_csv('ponderated_gap.csv')
-files.download('ponderated_gap.csv')
+average_weighted_yield_gap.to_csv('Weighted_gap.csv')
+files.download('Weighted_gap.csv')
