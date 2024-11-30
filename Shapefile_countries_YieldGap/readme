@@ -1,0 +1,50 @@
+### Shapefile Field Descriptions
+Notes:
+These fields correspond to the attributes in the shapefile.
+Abbreviated names were used to comply with field length limitations in shapefiles.
+The geometry field represents the spatial data, storing the geographical boundaries or shapes of each country.
+
+| **Abbreviated Field Name** | **Full Description**                                  |
+|-----------------------------|------------------------------------------------------|
+| **Alpha3code**              | Alpha-3 Code (ISO country code)                     |
+| **fid**                     | Feature ID                                          |
+| **FORMAL_EN**               | Formal English Name of the Country                  |
+| **ECONOMY**                 | Economy Classification                              |
+| **INCOME_GRP**              | Income Group Classification                         |
+| **WB_A3**                   | World Bank Alpha-3 Code                             |
+| **CONTINENT**               | Continent                                           |
+| **SUBREGION**               | Subregion                                           |
+| **ryg_trend**               | Relative Yield Gap Trend                            |
+| **avg_yg**                  | Average Weighted Yield Gap                          |
+| **shann_avg**               | Shannon Index (main crops)                   |
+| **shann_avg_grp**           | Shannon Index (functional groups main crops)             |
+| **shann_all**               | Shannon Index (All Crops)                          |
+| **shann_grp_all**           | Shannon Index (Functional groups All Crops)                    |
+| **pct_cult_area**           | Percent of Total Country Area Cultivated           |
+| **Tot_land_cv**             | Total Land Cover                                    |
+| **prp_main_hrv**            | Dominance of the major crops in harvested area                  |
+| **ecor**                    | Shannon Index (Ecoregions)                         |
+| **pct_irrig**               | Percent of Cultivated Area Equipped for Irrigation |
+| **roads_km2**               | Road Density (km²)                                 |
+| **Avg_pest**                | Pesticide Use                              |
+| **fert_avg**                | Fertilizer Use                             |
+| **GDP_percap**              | GDP per Capita                                     |
+| **Agr_GDP**                 | Percent Agriculture Value Added to GDP             |
+| **Ind_GDP**                 | Percent Industry Value Added to GDP                |
+| **Srv_GDP**                 | Percent Service Value Added to GDP                 |
+| **Pop_dens**                | Population Density                                 |
+| **pct_rural**               | Percent of Rural Population                        |
+| **HDI**                     | Human Development Index                            |
+| **CV_NRI**                  | Coefficient of Variation of National Rainfall Index|
+| **cv_temp**                 | Coefficient of Variation of Temperature            |
+| **Acctblty**                | Voice and Accountability                           |
+| **law**                     | Rule of Law                                        |
+| **rgltn**                   | Regulatory Quality                                 |
+| **pltcl_stab**              | Political Stability and Absence of Violence        |
+| **effect**                  | Government Effectiveness                           |
+| **corrpt**                  | Control of Corruption                              |
+| **GII**                     | Gender Inequality Index                            |
+| **dmcrcy**                  | Average Democracy Index                            |
+| **areakm**                  | Area (km²)                                         |
+| **geometry**                | Geometrical Shape (Spatial Data)                   |
+
