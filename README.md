@@ -3,10 +3,10 @@ This repository contains the complete workflow for data preprocessing and analys
 
 ## Data Preprocessing: 
 Conducted in Google Colab using Python.
+The workflow begins with preprocessing raw datasets to prepare them for analysis. This involves cleaning, filtering, and transforming data to ensure quality and consistency.
 ## Data Analysis: 
 Performed in R, focusing on statistical analysis and visualization as detailed in the paper.
-
-The workflow begins with preprocessing raw datasets to prepare them for analysis. This involves cleaning, filtering, and transforming data to ensure quality and consistency. The preprocessed data is then analyzed to generate insights and visualizations presented in the paper.
+The preprocessed data is analyzed to generate insights and visualizations presented in the paper.
 
 ## Requirements
 #### Python (Google Colab)
