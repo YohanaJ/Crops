@@ -36,7 +36,10 @@ colnames(crop_all)<-c("Area.Code..M49.","shannon_item_all", "shannon_itemgroup_a
 # merge the database with the response variables and predictor with the shannon index and harveste area of the main crops
 crop <- merge(crop_main,crop_all, by="Area.Code..M49.")
 #merge dataset with responde variable and predictors with diversity of ecoregions
-crop <- merge(crop, df1, by="Alpha.3code", by.y="ISO_A3")
+crop <- merge(crop, df1, by="Alpha.3code", by.y="ISO_A3") 
+
+#invert the trend so negative values (reduction of the yield gap) have a positive interpretation 
+crop$Relative_yield_gap_trend <- crop$Relative_yield_gap_trend*(-1)
 
 # estimate the dominance of the major crops 
 crop$proportion_main_harv <- crop$main_Harvested_Area/crop$Total_Harvested_Area
@@ -93,7 +96,7 @@ predictors <- c("shannon_avg_item", "shannon_avg_itemgroup", "shannon_item_all",
 
 
 ######################## use to create a shapefile with the data
-# library(sf)
+#library(sf)
 # countries <- read_sf("countries.shp")
 # colnames(crops_cleaned)
 # shp_count <- merge(countries,crops_cleaned, by.x="Alpha-3cod", by.y="Alpha.3code" )
@@ -139,7 +142,7 @@ crops_cleaned <- crops_cleaned %>%
 target <- "Relative_yield_gap_trend"
 
 # Initialize an empty data frame to store results
-results <- data.frame(Predictor = character(), Slope = numeric(), P_Value = numeric(), SE = numeric(), Significance = character(), stringsAsFactors = FALSE)
+results <- data.frame(Predictor = character(), Slope = numeric(), P_Value = numeric(), SE = numeric(), stringsAsFactors = FALSE)
 
 # Loop through each predictor
 for (predictor in predictors) {
@@ -151,28 +154,94 @@ for (predictor in predictors) {
   se <- coef(summary(model))[2, "Std. Error"]
   
   
-  results <- rbind(results, data.frame(Predictor = predictor, Slope = slope, P_Value = p_value, SE = se, Significance = significance))
+  results <- rbind(results, data.frame(Predictor = predictor, Slope = slope, P_Value = p_value, SE = se))
 }
 
 # Filter significant variables
-sub_signif <- subset(results, results$P_Value < 0.05)
+sub_signif <- subset(results, results$P_Value < 0.051)
 sub_signif$Predictor <- factor(sub_signif$Predictor, levels = sub_signif$Predictor[order(sub_signif$Slope)])
 
+new_labels_lineal <- c(
+  "shannon_item_all" = "Diversity of all crops", 
+  "roadsm_km2"="Density of roads",
+  "proportion_main_harv" ="Poportion of main crops harvested",
+  "fert_avg" ="Fertilizer use", 
+  "percent_Agriculture_value_added_to_GDP" = "Percent of agriculture value added to GDP",
+  "GDP.per.capita" = "GDP per capita", 
+  "percent_service_value_added_to_GDP" ="Percent of services value added to GDP",
+  "percent_industry_value_added_to_GDP" = "Percent of industry value added to GDP", 
+  "percent_rural" = "Percentage of rural population", 
+  "cv_temp" = "Variation of Temperature",
+  "Regulation" = "Regulatory quality",
+  "Accountability"  = "Voice and Accountability",
+  "law"="Rule of Law",
+  "PoliticalStability" = "Political Stability and Absence of Violence/Terrorism",
+  "Effectiveness"  ="Government Effectiveness",
+  "Corruption"  = "Control of Corruption" ,                         
+  "Avg_democracy" = "Democracy index" ,                
+  "GII"  = "Gender Inequality Index",
+  "HDI"= "Human Development Index"
+  
+)
 
-# Add error bars and significance to the plot
-ggplot(sub_signif, aes(x = reorder(Predictor, Slope), y = Slope, fill = Slope > 0)) +
+
+
+# Create a dataframe with the categories
+categories_df <- data.frame(
+  Predictor = c(
+    "shannon_item_all",
+    "proportion_main_harv",
+    "roadsm_km2",
+    "fert_avg",
+    "GDP.per.capita",
+    "percent_Agriculture_value_added_to_GDP",
+    "percent_industry_value_added_to_GDP",
+    "percent_service_value_added_to_GDP",
+    "percent_rural",
+    "HDI",
+    "cv_temp",
+    "Accountability",
+    "law",
+    "Regulation",
+    "PoliticalStability",
+    "Effectiveness",
+    "Corruption",
+    "Avg_democracy",
+    "GII"
+  ),
+  category = c(
+    "Natural", "Natural",  "Physical",  "Physical", "Financial","Financial","Financial","Financial",
+    "Human", "Human","Climate","Socio-Political", "Socio-Political", "Socio-Political", 
+    "Socio-Political", "Socio-Political", "Socio-Political", "Socio-Political", "Socio-Political"
+  )
+)
+
+# Merge the categories with the main dataframe
+sub_signif <- merge(sub_signif, categories_df, by = "Predictor", all.x = TRUE)
+
+ggplot(sub_signif, aes(x = reorder(Predictor, Slope), y = Slope, fill = category)) +
   geom_bar(stat = "identity") +
   geom_errorbar(aes(ymin = Slope - SE, ymax = Slope + SE), width = 0.2, color = "black") +  # Add error bars
-  scale_x_discrete(labels = new_labels_lineal)+
+  scale_x_discrete(labels = new_labels_lineal) +
   coord_flip() +
   labs(
     title = "",
     x = "Predictor",
-    y = "Estimate"
+    y = "Estimate",
+    fill = "Capital" # Title for the legend
   ) +
-  scale_fill_manual(values = c("TRUE" = "#53868B", "FALSE" = "#CD5B45")) +  # Positive in blue, negative in red
+  # Assign custom colors to each category
+  scale_fill_manual(values = c(
+    "Climate" = "#1E90FF",    # Blue (separate, appears first)
+    "Natural" = "#008B00",      # Green
+    "Physical" = "grey",       # Grey
+    "Financial" = "#FFC125",   # Gold
+    "Socio-Political" = "#9370DB", # Purple
+    "Human" = "#EE6AA7"      # Pink
+  )) +
+  guides(fill = guide_legend(reverse = FALSE)) + # Ensures order is as defined in factor levels
   theme_bw() +
-  theme(legend.position = "none")
+  theme(legend.position = "right")
 
 
 
@@ -221,29 +290,61 @@ new_labels <- c(
   "PoliticalStability" = "Political Stability and Absence of Violence/Terrorism"
 )
 
-# Modify the plot to include the new labels
+
+# Define categories for each variable
+categories <- c(
+  "shannon_avg_item" = "Natural",    
+  "shannon_item_all" = "Natural",                            
+  "shannon_itemgroup_all" = "Natural",                   
+  "shannon_index" = "Natural",                   
+  "percent_cultivated_area_equipped_for_irrigation" = "Physical",
+  "Avg_pest" = "Physical",                     
+  "GDP.per.capita" = "Financial",                
+  "percent_industry_value_added_to_GDP" = "Financial",  
+  "Population.density" = "Human",
+  "percent_rural" = "Human", 
+  "CV_NRI" = "Climate",     
+  "Regulation" = "Socio-Political",                                
+  "PoliticalStability" = "Socio-Political"
+)
+
+# Assign categories to the data
+model_summary$category <- categories[model_summary$term]
 plot <- ggplot(model_summary, aes(x = reorder(term, estimate), y = estimate)) +
-  geom_point(aes(color = estimate > 0), size = 3) + # Use logical color (positive or negative) without showing legend
-  geom_errorbar(aes(ymin = estimate - std.error * 1.96, ymax = estimate + std.error * 1.96), width = 0.2) + # 95% CI
-  geom_text(aes(label = significance, shape = significance), hjust = -0.5, vjust = 0.5, size = 6, color = "black") + # Add larger significance codes
-  coord_flip() + # Flip coordinates for better readability
+  geom_point(aes(color = category), size = 3) + # color by category
+  geom_errorbar(aes(ymin = estimate - std.error * 1.96, ymax = estimate + std.error * 1.96), width = 0.2) +
+  geom_text(aes(label = significance, shape = significance), hjust = -0.5, vjust = 0.5, size = 6, color = "black") +
+  coord_flip() +
   labs(
     x = "Predictors",
     y = "Estimates",
     title = "",
     subtitle = ""
   ) +
-  scale_color_manual(values = c("TRUE" = "#00CDCD", "FALSE" = "#CD5B45"), guide = "none") + # Custom colors without showing legend
+  # Assign colors to each category
+  scale_color_manual(values = c(
+    "Natural" = "#008B00",
+    "Physical" = "grey",
+    "Financial" = "#FFC125",
+    "Human" = "#EE6AA7",
+    "Socio-Political" = "#9370DB",
+    "Climate" = "#1E90FF"
+  ), name = "Capital") +
   scale_shape_manual(
-    values = c("***" = 16, "**" = 16, "*" = 16, "." = 16), # Shapes for asterisks
+    values = c("***" = 16, "**" = 16, "*" = 16, "." = 16),
     labels = c("***" = "p < 0.001", "**" = "p < 0.01", "*" = "p < 0.05", "." = "p < 0.1"),
     name = "Significance Codes"
   ) +
-  scale_x_discrete(labels = new_labels) + # Apply the new labels to the x-axis (flipped, so actually the y-axis)
+  scale_x_discrete(labels = new_labels) +
   theme_minimal()
 
-# Display the plot
 print(plot)
+
+
+
+
+
+
 
 
 
@@ -299,35 +400,62 @@ new_labels2 <- c(
   "percent_rural" = "Percentage of rural population", 
   "HDI" = "HDI",     
   "Regulation" = "Regulatory quality",                                
-  "GII" = "Gini index"
+  "GII" = "Gender inequality index"
 )
 
 
+
+# Define categories for each variable
+categories2 <- c(
+  "shannon_avg_item" = "Natural",
+  "shannon_item_all" = "Natural",
+  "shannon_itemgroup_all" = "Natural",
+  "Total_Land_Cover" = "Natural",
+  "fert_avg" = "Physical",
+  "Avg_pest" = "Physical",
+  "GDP.per.capita" = "Financial",
+  "percent_industry_value_added_to_GDP" = "Financial",
+  "percent_Agriculture_value_added_to_GDP"= "Financial",
+  "percent_service_value_added_to_GDP"= "Financial",
+  "Population.density" = "Human",
+  "percent_rural" = "Human",
+  "HDI" = "Human",
+  "Regulation" = "Socio-Political",
+  "GII" = "Socio-Political"
+)
+
+# Assign categories to the data
+model_summary2$category2 <- categories2[model_summary2$term]
+
+# Now plot with categories mapped to colors
 plot2 <- ggplot(model_summary2, aes(x = reorder(term, estimate), y = estimate)) +
-  geom_point(aes(color = estimate > 0), size = 3) + # Use logical color (positive or negative) without showing legend
-  geom_errorbar(aes(ymin = estimate - std.error * 1.96, ymax = estimate + std.error * 1.96), width = 0.2) + # 95% CI
-  geom_text(aes(label = significance, shape = significance), hjust = -0.5, vjust = 0.5, size = 6, color = "black") + # Add larger significance codes
-  coord_flip() + # Flip coordinates for better readability
+  geom_point(aes(color = category2), size = 3) + # color by category
+  geom_errorbar(aes(ymin = estimate - std.error * 1.96, ymax = estimate + std.error * 1.96), width = 0.2) +
+  geom_text(aes(label = significance, shape = significance), hjust = -0.5, vjust = 0.5, size = 6, color = "black") +
+  coord_flip() +
   labs(
     x = "Predictors",
     y = "Estimates",
     title = "",
     subtitle = ""
   ) +
-  scale_color_manual(values = c("TRUE" = "#00CDCD", "FALSE" = "#CD5B45"), guide = "none") + # Custom colors without showing legend
+  # Assign colors to each category
+  scale_color_manual(values = c(
+    "Natural" = "#008B00",
+    "Physical" = "grey",
+    "Financial" = "#FFC125",
+    "Human" = "#EE6AA7",
+    "Socio-Political" = "#9370DB"
+  ), name = "Capital") +
   scale_shape_manual(
-    values = c("***" = 16, "**" = 16, "*" = 16, "." = 16), # Shapes for asterisks
+    values = c("***" = 16, "**" = 16, "*" = 16, "." = 16),
     labels = c("***" = "p < 0.001", "**" = "p < 0.01", "*" = "p < 0.05", "." = "p < 0.1"),
     name = "Significance Codes"
   ) +
-  scale_x_discrete(labels = new_labels2) + # Apply the new labels to the x-axis (flipped, so actually the y-axis)
+  scale_x_discrete(labels = new_labels2) +
   theme_minimal()
 
-# Display the plot
 print(plot2)
-
-
-
 
 
   
