@@ -1,4 +1,4 @@
-setwd("C:/Users/yohan/Desktop/crops")
+setwd("your")
 library(stringr)
 library(dplyr)
 library(tidyr)
@@ -9,8 +9,6 @@ library(readxl)
 library(vegan)
 library(dplyr)
 library(broom)
-
-
 
 
 ############### ECORREGIONS
@@ -162,9 +160,9 @@ sub_signif <- subset(results, results$P_Value < 0.051)
 sub_signif$Predictor <- factor(sub_signif$Predictor, levels = sub_signif$Predictor[order(sub_signif$Slope)])
 
 new_labels_lineal <- c(
-  "shannon_item_all" = "Diversity of all crops", 
+  "shannon_item_all" = "Overall crop diversity", 
   "roadsm_km2"="Density of roads",
-  "proportion_main_harv" ="Poportion of main crops harvested",
+  "proportion_main_harv" ="Dominance of major crops",
   "fert_avg" ="Fertilizer use", 
   "percent_Agriculture_value_added_to_GDP" = "Percent of agriculture value added to GDP",
   "GDP.per.capita" = "GDP per capita", 
@@ -275,9 +273,9 @@ model_summary <- model_summary %>%
     estimate_sign = ifelse(estimate > 0, "Positive", "Negative") # Define positive/negative estimates
   )
 new_labels <- c(
-  "shannon_avg_item" = "Diversity of main crops",    
-  "shannon_item_all" = "Diversity of all crops",                        
-  "shannon_itemgroup_all" = "Diversity of functional groups in main crops",                
+  "shannon_avg_item" = "Diversity of major crops",    
+  "shannon_item_all" = "Overall crop diversity",                        
+  "shannon_itemgroup_all" = "Overall functional diversity",                
   "shannon_index" = "Diversity of ecoregions",                
   "percent_cultivated_area_equipped_for_irrigation" = "Percentage cultivated equipped for irrigation",
   "Avg_pest" = "Pesticide use",                     
@@ -386,9 +384,9 @@ model_summary2 <- model_summary2 %>%
   )
 
 new_labels2 <- c(
-  "shannon_avg_item" = "Diversity of main crops",    
-  "shannon_item_all" = "Diversity of all crops",                        
-  "shannon_itemgroup_all" = "Diversity of functional groups in main crops",                
+  "shannon_avg_item" = "Diversity of major crops",    
+  "shannon_item_all" = "Overall crop diversity",                        
+  "shannon_itemgroup_all" = "Overall functional diversity",                
   "Total_Land_Cover" = "Natural land cover",                
   "fert_avg" = "Fertilizer use",
   "Avg_pest" = "Pesticide use",                     
@@ -473,5 +471,6 @@ cor_matrix <- cor(data_selected, use = "complete.obs")
   
 # Extract the correlations with the target variable
 target_correlations <- as.data.frame(cor_matrix[, target_variable, drop = FALSE])
+  
   
   
